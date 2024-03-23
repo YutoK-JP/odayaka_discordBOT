@@ -17,7 +17,6 @@ module.exports = {
     else{
       const fs = require("fs");
       var date = new Date();
-      var dateString = date.toLocaleString()
 
       const overview = JSON.parse(fs.readFileSync(env.deleteLogFile));
       const embed = new EmbedBuilder()
@@ -32,9 +31,7 @@ module.exports = {
             .setLabel("全ファイルを送信")
             .setStyle(ButtonStyle.Primary)
       );
-          
-          
-
+      
       interaction.reply({embeds:[embed], ephemeral: true, components: [row]});
       return;
     

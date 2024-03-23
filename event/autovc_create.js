@@ -1,7 +1,7 @@
-const { EmbedBuilder, ChannelType} = require('discord.js');
+const { Events, ButtonBuilder,ChannelType, ActionRowBuilder, ButtonStyle} = require('discord.js');
 
 module.exports = {
-  type:"voiceStateUpdate",
+  type:Events.VoiceStateUpdate,
   nick:"dm",
   async execute(oldstate, newstate, client){
     //参加もしくは移動時にのみ実行
@@ -31,8 +31,22 @@ module.exports = {
         name: `Voice room ${i}`,
         type: ChannelType.GuildVoice,
       });
-
+      
       newstate.setChannel(newChannel);
+      
+      const row = new ActionRowBuilder()
+      .addComponents(
+        new ButtonBuilder()
+          .setCustomId("ChangeChannelName")
+          .setLabel("変更")
+          .setStyle(ButtonStyle.Success),
+        new ButtonBuilder()
+          .setCustomId("ChangeChannelNameCancel")
+          .setLabel("変更しない")
+          .setStyle(ButtonStyle.Secondary),
+      );
+
+      newChannel.send({content:`${newstate.member}\n新チャンネルの名前を変更する場合は下のボタンをクリックしてください`, components:[row]});
     }
   }
 }

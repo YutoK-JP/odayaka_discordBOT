@@ -1,8 +1,8 @@
-const { EmbedBuilder, ChannelType} = require('discord.js');
+const { Events, EmbedBuilder, ChannelType} = require('discord.js');
 
 module.exports = {
-  type:"voiceStateUpdate",
-  nick:"dm",
+  type:Events.VoiceStateUpdate,
+  nick:"leftvc",
   async execute(oldstate, newstate, client){
     //退出もしくは移動時にのみ実行
     if(!(oldstate.channel)) return;

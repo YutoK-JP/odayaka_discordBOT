@@ -1,5 +1,5 @@
 const express = require('express')
-const { Client, GatewayIntentBits, Collection, Partials} = require('discord.js');
+const { Client, GatewayIntentBits, Collection, Partials, Events} = require('discord.js');
 const { Routes } = require('discord-api-types/v9');
 const { REST } = require('@discordjs/rest');
 
@@ -67,7 +67,7 @@ for (const file of buttonFiles) {
 
 
 
-client.on("interactionCreate", async (interaction) => {
+client.on(Events.InteractionCreate, async (interaction) => {
     if(interaction.isButton()){
         if(!buttonCmd.includes(interaction.customId))
         {
@@ -106,7 +106,7 @@ for (const file of lcomsFiles) {
 client.voiceAutoSetting = require('./conf/vc_auto_setting.json');
 
 // COMMAND REACTOR
-client.on('messageCreate', message => {
+client.on(Events.MessageCreate, message => {
 	if (!message.content.startsWith(prefix) || message.author.bot) return;
 
 	const args = message.content.slice(prefix.length).trim().split(/ +/);
@@ -149,7 +149,7 @@ for(const file of cronFiles){
 
 
 
-client.on('ready', client => {
+client.on(Events.ClientReady, client => {
 	console.log(client.commands)
     console.log(buttonExe)
 });

@@ -15,7 +15,6 @@ module.exports = {
         interection.reply({files:[env.deleteLogFile], ephemeral: true});
         return;
     }
-  
   }
 }
 
