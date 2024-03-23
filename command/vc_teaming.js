@@ -13,18 +13,18 @@ module.exports = {
     .setDescription("作成するチーム数")
     .setRequired(true)),
   
-  async execute(interection, client, env){
-    const vc = interection.member.voice.channel;
+  async execute(interaction, client, env){
+    const vc = interaction.member.voice.channel;
     if(!vc) {
-      interection.reply({content:"VCに参加している必要があります", ephemeral: true});
+      interaction.reply({content:"VCに参加している必要があります", ephemeral: true});
       return;
     }
 
-    const teamN = interection.options._hoistedOptions[0].value;
+    const teamN = interaction.options._hoistedOptions[0].value;
     const vcMembers = vc.members.map(mem => mem.displayName);
 
     if (vcMembers.length < teamN){
-      interection.reply({content:"チーム数はメンバー数より多い値で指定してください。", ephemeral: true});
+      interaction.reply({content:"チーム数はメンバー数より多い値で指定してください。", ephemeral: true});
       return;
     }
     
@@ -43,7 +43,7 @@ module.exports = {
     
     infoFields.forEach(element => {messageEmbed.addFields(element)});
 
-    interection.reply({ embeds: [messageEmbed] });
+    interaction.reply({ embeds: [messageEmbed] });
   }
 }
 

@@ -9,9 +9,9 @@ module.exports = {
   data: new SlashCommandBuilder().setName(cmdName).setDescription("※管理者用コマンドです。"),
   permissions: ['SEND_MESSAGES'],
   
-  async execute(interection, client, env){
-    if(!checkrole(interection.member, env.AllowedViewLog)) {
-      interection.reply({content:"このコマンドを実行する権限がありません。", ephemeral: true});
+  async execute(interaction, client, env){
+    if(!checkrole(interaction.member, env.AllowedViewLog)) {
+      interaction.reply({content:"このコマンドを実行する権限がありません。", ephemeral: true});
       return
     }
     else{
@@ -35,7 +35,7 @@ module.exports = {
           
           
 
-      interection.reply({embeds:[embed], ephemeral: true, components: [row]});
+      interaction.reply({embeds:[embed], ephemeral: true, components: [row]});
       return;
     
     }

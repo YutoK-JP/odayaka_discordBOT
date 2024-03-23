@@ -8,16 +8,6 @@ const fs = require('fs');
 const cron = require('node-cron');
 
 prefix = "!";
-/*const client = new Client({
-	intents: [
-		Intents.FLAGS.GUILDS, 
-		Intents.FLAGS.GUILD_MEMBERS, 
-		Intents.FLAGS.GUILD_MESSAGES, 
-		Intents.FLAGS.DIRECT_MESSAGES, 
-		Intents.FLAGS.GUILD_VOICE_STATES, 
-		Intents.FLAGS.GUILD_PRESENCES],
-	partials: [ 'CHANNEL' ] 
-});*/
 
 const client = new Client({ intents: [
 	GatewayIntentBits.Guilds,
@@ -111,6 +101,9 @@ for (const file of lcomsFiles) {
     const command = require(`./legacy_com/${file}`)
     client.commands.set(command.name, command);
 }
+
+//VC SETTING REGISTER
+client.voiceAutoSetting = require('./conf/vc_auto_setting.json');
 
 // COMMAND REACTOR
 client.on('messageCreate', message => {

@@ -9,10 +9,10 @@ module.exports = {
   .setName(cmdName)
   .setDescription("VC内のメンバーをランダムな順番にリストアップします"),
   
-  async execute(interection, client, env){
-    const vc = interection.member.voice.channel;
+  async execute(interaction, client, env){
+    const vc = interaction.member.voice.channel;
     if(!vc) {
-      interection.reply({content:"VCに参加している必要があります", ephemeral: true});
+      interaction.reply({content:"VCに参加している必要があります", ephemeral: true});
       return;
     }
     
@@ -23,7 +23,7 @@ module.exports = {
       .setTitle("VCメンバーリスト")
       .setDescription(members.join("\n"));
 
-    interection.reply({ embeds: [messageEmbed], ephemeral: true});
+    interaction.reply({ embeds: [messageEmbed], ephemeral: true});
     console.log(members);
   }
 }

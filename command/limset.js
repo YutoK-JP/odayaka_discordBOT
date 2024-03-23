@@ -13,15 +13,15 @@ module.exports = {
     .setDescription("人数制限")
     .setRequired(true)),
   
-  async execute(interection, client, env){
-    const vc = interection.member.voice.channel
+  async execute(interaction, client, env){
+    const vc = interaction.member.voice.channel
     if(!vc) {
-      interection.reply({content:"VCに参加している必要があります", ephemeral: true});
+      interaction.reply({content:"VCに参加している必要があります", ephemeral: true});
       return;
     }
 
     
-    let n = interection.options._hoistedOptions[0].value;
+    let n = interaction.options._hoistedOptions[0].value;
 
     if(n!=0)
     {
@@ -32,7 +32,7 @@ module.exports = {
 
     vc.setUserLimit(n);
     
-    const actorname = interection.user.username
+    const actorname = interaction.user.username
     var date = new Date();
     date=date.toLocaleString();
 
@@ -43,6 +43,6 @@ module.exports = {
     const vcobj = {channel_name:vc.name, parent_name:vc.parent.name, limit:n};
     const obj = {date:date, name:actorname, settings:vcobj};
 
-    interection.reply({content:`人数制限を${n!=0?n:"∞"}人に変更しました。`, ephemeral: true});
+    interaction.reply({content:`人数制限を${n!=0?n:"∞"}人に変更しました。`, ephemeral: true});
   }
 }

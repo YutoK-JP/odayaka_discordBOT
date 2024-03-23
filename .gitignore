@@ -130,3 +130,4 @@ configs.js
 quote/*
 log/*
 temp/*
+conf/vc_auto_setting.json
