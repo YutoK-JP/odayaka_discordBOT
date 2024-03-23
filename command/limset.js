@@ -1,10 +1,12 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const fs = require('fs');
 
+const cmdName = 'ninzu'
+
 module.exports = {
-  name:'ninzu',
+  name:cmdName,
   data: new SlashCommandBuilder()
-  .setName('ninzu')
+  .setName(cmdName)
   .setDescription("VCの人数制限を変更します")
   .addIntegerOption(option=>
     option.setName('人数')

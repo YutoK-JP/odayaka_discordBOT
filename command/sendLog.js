@@ -2,10 +2,11 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const { ReactionUserManager } = require('discord.js');
 const { ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle, Events } = require('discord.js');
 
+const cmdName = 'sendlog'
 
 module.exports = {
-  name:'sendlog',
-  data: new SlashCommandBuilder().setName('sendlog').setDescription("※管理者用コマンドです。"),
+  name:cmdName,
+  data: new SlashCommandBuilder().setName(cmdName).setDescription("※管理者用コマンドです。"),
   permissions: ['SEND_MESSAGES'],
   
   async execute(interection, client, env){

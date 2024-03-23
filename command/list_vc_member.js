@@ -1,10 +1,12 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { EmbedBuilder } = require('discord.js');
 
+const cmdName = 'listupvc'
+
 module.exports = {
-  name:'listupvc',
+  name:cmdName,
   data: new SlashCommandBuilder()
-  .setName('listupvc')
+  .setName(cmdName)
   .setDescription("VC内のメンバーをランダムな順番にリストアップします"),
   
   async execute(interection, client, env){
