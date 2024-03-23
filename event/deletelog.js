@@ -7,10 +7,7 @@ module.exports = {
         if(message.author.bot || message.interection) return;
         if(message.channel.id == env.niChan) return;
 
-        var path = require("path");
-        //console.log(__dirname)
-
-        //#region definition
+        const path = require("path");
         const fs = require("fs");
 
         var createDate = new Date(message.createdTimestamp);

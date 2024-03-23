@@ -6,7 +6,7 @@ import textwrap
 import re
 
 def add_text(img, message, pos=(0,0), font="HGRSGU.TTC", size = 54):
-    font_path = "/home/pi/MEIRYO.TTC"
+    font_path = "./quote/MEIRYO.TTC"
     font_size = size
     font = ImageFont.truetype(font_path, font_size)
     img = Image.fromarray(img)                          # cv2(NumPy)型の画像をPIL型に変換
@@ -29,7 +29,7 @@ if not("." in file_name):
 
 img1 = np.array(cv2.resize(cv2.imread(user_img), (720, 720)), dtype=np.uint8)
 img0 = np.full((720, 1280-720, 3), 255, dtype=np.uint8)
-base = np.array(cv2.imread("/home/pi/odayaka/base.png"), dtype=np.float32)/255
+base = np.array(cv2.imread("./quote/base.png"), dtype=np.float32)/255
 
 img1 = cv2.hconcat([img1, img0])
 
@@ -39,41 +39,45 @@ img=np.array(img, dtype=np.uint8)
 print(img.shape)
 
 #Username
-name = "- "+name_
+name = "－ "+name_
 size = 36
 name_offset = size*len(name)//2
 name_pos = 960 - name_offset
 
-img = add_text(img=img, message=name, pos=(name_pos,640-size*1.5), size=size, font="meiryo.ttc")
+img = add_text(img=img, message=name, pos=(name_pos, int(720*3/4 + size/2)), size=size, font="meiryo.ttc")
 
 if(add_img =="null" or add_img == "none"):
 #Content
+    #
+    len_size = [[60, 14, 40], [120, 20, 28], [200, 28, 20], [-1, 36, 16]]
+    
     text=text_
     text = re.sub('<.+>', '', text_)
-    letters = 14 if (len(text_) < 200) else 28
+    print(text)
+    for l, m, n in len_size:
+        if(len(text_)<l or l==-1):
+            letters_1line, size = m, n
+            break
+
     texts = text.split("\n")
     t = []
     for s in texts:
         print(s)
-
-        t += textwrap.wrap(s, letters)
-    #print(t)
+        t += textwrap.wrap(s, letters_1line)
     
 
     lengths = list(map(len, t))
-    line_max = max(lengths)
+    length_max = max(lengths)
     text = "\n".join(t)
-    #print(text)
-    size = 40 if (len(text_) < 200) else 20
 
     lines = text.count("\n")
-    text_offset = size*min(letters, line_max) // 2
-    text_pos = 980 - text_offset
+    text_xoffset = size*min(letters_1line, length_max) // 2
+    text_xpos = 980 - text_xoffset
 
-    texty_pos =  170 - size*lines//4
-    #print(lines, texty_pos)
+    text_ypos =  int(720*3/8)# + (lines)*size)
+    print(text_ypos)
 
-    img = add_text(img=img, message=text, pos=(text_pos,texty_pos), size=size, font="meiryo.ttc")
+    img = add_text(img=img, message=text, pos=(text_xpos,text_ypos), size=size, font="meiryo.ttc")
 
     cv2.imwrite(file_name, cv2.cvtColor(img, cv2.COLOR_BGR2GRAY))
 

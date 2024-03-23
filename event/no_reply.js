@@ -19,7 +19,7 @@ module.exports = {
       }
 
       const fs = require("fs");
-      const logFilePath = "/home/pi/odayaka/log/noReply.json";
+      const logFilePath = env.noReplyLogFile;
         if(fs.existsSync(logFilePath))
         {
           try{

@@ -1,6 +1,7 @@
 const { execSync } = require("child_process")
-var req = require('request');
-var fs = require('fs');
+const req = require('request');
+const fs = require('fs');
+const path = require("path");
 const { response } = require("express");
 const { setTimeout } = require('timers/promises');
 
@@ -15,7 +16,8 @@ module.exports = {
 
       console.log("Hi!");
       ch = message.channel;
-      IMAGE_PATH = "/home/pi/odayaka/quote/"
+
+      IMAGE_PATH = process.cwd()+"/quote/";
       
       org_id = message.reference.messageId
       org_message = await ch.messages.fetch(org_id)
@@ -39,7 +41,7 @@ module.exports = {
 
       let moji = message.content.includes("文字") || message.content.includes("text");
       
-      python_exec = "/home/pi/odayaka/render_image.py"
+      python_exec = "./render_image.py"
 
       user_id = org_message.member.id
       client_id = message.member.id
@@ -48,8 +50,17 @@ module.exports = {
       user_name = org_message.member.displayName
 
       
-      user_img = IMAGE_PATH + "users/" + user_id+".png"
-      output = IMAGE_PATH + client_id+".png"
+      users_dir = path.join(IMAGE_PATH, "users")
+      output_dir = path.join(IMAGE_PATH, "images")
+
+      if (!fs.existsSync(users_dir))
+        fs.mkdirSync(users_dir, {recursive:true});
+
+      if (!fs.existsSync(output_dir))
+        fs.mkdirSync(output_dir, {recursive:true});
+
+      user_img = path.join(users_dir, user_id+".png");
+      output = path.join(output_dir, client_id+".png");
 
       if(!ex_imgURL || moji){
         req({
@@ -68,7 +79,7 @@ module.exports = {
         req({
           method:"GET", url:image_URL, encoding:null,},
           async (error, res, body1) => {
-            if(!error && response.statusCode ===200){
+            if(!error && response.statusCode === 200){
               fs.writeFileSync(user_img, body1, 'binary');
               req({
                 method:"GET", url:ex_imgURL, encoding:null,},
