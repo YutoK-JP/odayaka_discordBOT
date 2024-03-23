@@ -35,7 +35,7 @@ module.exports = {
     date=date.toLocaleString();
 
     console.log("text file is writing...")
-    fs.appendFileSync('/home/pi/Share/limitlog.txt', `[${date}]「${actorname}」 has changed 「${vc.name}」's (in ${vc.parent.name}) limit into ${n!=0?n:'∞'}.\n`);
+    fs.appendFileSync(env.limitVoiceLogFile, `[${date}]「${actorname}」 has changed 「${vc.name}」's (in ${vc.parent.name}) limit into ${n!=0?n:'∞'}.\n`);
     console.log("text file was completely saved!")
 
     const vcobj = {channel_name:vc.name, parent_name:vc.parent.name, limit:n};
