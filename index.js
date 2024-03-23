@@ -99,7 +99,7 @@ client.on("interactionCreate", async (interaction) => {
 	catch(error){
 		console.log("Interactoin Error")
 		console.log(error)
-		interaction.reply("Sorry I cannot response!")
+		interaction.reply({content:"コマンドに何らかの問題が発生しました", ephemeral:true});
 	}
 });
 //#endregion
@@ -135,10 +135,10 @@ for (const file of eventFiles){
     const event = require(`./event/${file}`);
 	console.log(`event ${event.nick} was registered.`);
     if(event.once){
-        client.once(event.name, (...args) => event.execute(...args, client, env))
+        client.once(event.type, (...args) => event.execute(...args, client, env))
         } 
     else {
-        client.on(event.name, (...args) => {
+        client.on(event.type, (...args) => {
             try{
             	event.execute(...args, client, env)
             }
