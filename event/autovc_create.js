@@ -1,8 +1,8 @@
 const { Events, ButtonBuilder,ChannelType, ActionRowBuilder, ButtonStyle} = require('discord.js');
 
 module.exports = {
-  type:Events.VoiceStateUpdate,
-  nick:"dm",
+  type : Events.VoiceStateUpdate,
+  nick : "vcCreate",
   async execute(oldstate, newstate, client){
     //参加もしくは移動時にのみ実行
     if(!(newstate.channel)) return;
@@ -12,6 +12,7 @@ module.exports = {
 
     const enteredChannel = newstate.channel;
     const guild = newstate.guild;
+    const member = newstate.member;
 
     //参加チャンネルとハブチャンネルのidが一致
     if( vcsetting[guild.id].hub_channel === enteredChannel.id ) {
@@ -22,13 +23,21 @@ module.exports = {
       const channelList = category.children.cache;
       const channelNamelist = channelList.map(channel => channel.name);
 
-      //Voice room xの中で最新に
+      //登録済みゲームは自動で命名
+      const nameTemplates = client.knownGames;
+      const knownActivities = member.presence.activities.filter(activity => Object.keys(nameTemplates).includes(activity.applicationId));
+      let voiceTemplate = nameTemplates["default"];
+      if (knownActivities.length>0){
+          voiceTemplate = nameTemplates[knownActivities[0].applicationId];
+      }
+
+      //"<テンプレート名> X"の中で最新に
       let i = 1;
-      while(channelNamelist.includes(`Voice room ${i}`)) i++;
+      while(channelNamelist.includes(`${voiceTemplate} ${i}`)) i++;
 
       //新チャンネルを作成
       const newChannel = await category.children.create({
-        name: `Voice room ${i}`,
+        name: `${voiceTemplate} ${i}`,
         type: ChannelType.GuildVoice,
       });
       

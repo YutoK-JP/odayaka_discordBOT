@@ -26,7 +26,7 @@ const excuter = {};
 let buttonCmd = [];
 let buttonExe = {};
 client.commands = new Collection();
-
+client.knownGames = JSON.parse(fs.readFileSync("./conf/vc_name_templete.json"))
 const env = require("./configs.js")
 
 
