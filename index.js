@@ -22,6 +22,7 @@ client.slashCommands = new Collection();
 client.buttonCommands = new Collection();
 client.legacyCommands = new Collection();
 client.knownGames = JSON.parse(fs.readFileSync("./conf/vc_name_templete.json"))
+client.voiceAutoSetting = require('./conf/vc_auto_setting.json');
 const env = require("./configs.js");
 const rest = new REST({ version: '9' }).setToken(env.TOKEN);
 const prefix = "!";
@@ -114,8 +115,7 @@ for (const file of lcomsFiles) {
     client.legacyCommands.set(command.name, command);
 }
 
-//VC SETTING REGISTER
-client.voiceAutoSetting = require('./conf/vc_auto_setting.json');
+
 
 // COMMAND REACTOR
 client.on(Events.MessageCreate, message => {
