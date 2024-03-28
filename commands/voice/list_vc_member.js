@@ -1,15 +1,12 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { EmbedBuilder } = require('discord.js');
 
-const cmdName = 'listupvc'
-
 module.exports = {
-  name:cmdName,
   data: new SlashCommandBuilder()
-  .setName(cmdName)
+  .setName('listupvc')
   .setDescription("VC内のメンバーをランダムな順番にリストアップします"),
   
-  async execute(interaction, client, env){
+  execute: async function(interaction, client, env){
     const vc = interaction.member.voice.channel;
     if(!vc) {
       interaction.reply({content:"VCに参加している必要があります", ephemeral: true});

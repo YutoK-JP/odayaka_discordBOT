@@ -1,19 +1,16 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const fs = require('fs');
 
-const cmdName = 'ninzu'
-
 module.exports = {
-  name:cmdName,
   data: new SlashCommandBuilder()
-  .setName(cmdName)
+  .setName('ninzu')
   .setDescription("VCの人数制限を変更します")
   .addIntegerOption(option=>
     option.setName('人数')
     .setDescription("人数制限")
     .setRequired(true)),
   
-  async execute(interaction, client, env){
+  execute: async function(interaction, client, env){
     const vc = interaction.member.voice.channel
     if(!vc) {
       interaction.reply({content:"VCに参加している必要があります", ephemeral: true});

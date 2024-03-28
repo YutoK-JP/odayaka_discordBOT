@@ -2,14 +2,14 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const { ReactionUserManager } = require('discord.js');
 const { ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle, Events } = require('discord.js');
 
-const cmdName = 'sendlog'
 
 module.exports = {
-  name:cmdName,
-  data: new SlashCommandBuilder().setName(cmdName).setDescription("※管理者用コマンドです。"),
+  data: new SlashCommandBuilder()
+    .setName('sendlog')
+    .setDescription("※管理者用コマンドです。"),
   permissions: ['SEND_MESSAGES'],
   
-  async execute(interaction, client, env){
+  execute: async function(interaction, client, env){
     if(!checkrole(interaction.member, env.AllowedViewLog)) {
       interaction.reply({content:"このコマンドを実行する権限がありません。", ephemeral: true});
       return

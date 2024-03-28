@@ -5,7 +5,7 @@ module.exports = {
   name:'ChangeChannelName',
   permissions: ['SEND_MESSAGES'],
   
-  async execute(interaction, client, env){
+  execute: async function(interaction, client, env){
     const modal = new ModalBuilder()
 			.setCustomId('changingVCname')
 			.setTitle('VC名変更');

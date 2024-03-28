@@ -1,19 +1,16 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const { EmbedBuilder } = require('discord.js');
 
-const cmdName = 'teamvc'
-
 module.exports = {
-  name:cmdName,
   data: new SlashCommandBuilder()
-  .setName(cmdName)
+  .setName('teamvc')
   .setDescription("VC内のメンバーをランダムな順番にリストアップします")
   .addIntegerOption(option=>
     option.setName('チーム数')
     .setDescription("作成するチーム数")
     .setRequired(true)),
   
-  async execute(interaction, client, env){
+  execute: async function(interaction, client, env){
     const vc = interaction.member.voice.channel;
     if(!vc) {
       interaction.reply({content:"VCに参加している必要があります", ephemeral: true});

@@ -11,7 +11,7 @@ module.exports = {
         const channel = interaction.channel;
         interaction.reply("チャンネル名を変更しました。");
         const startMes = await channel.messages.fetch({ after: '0', limit: 1 });
-        startMes.first().delete()
+        startMes.first().delete();
         channel.setName(newName);
     }
 }

@@ -1,21 +1,16 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const { ReactionUserManager } = require('discord.js');
-const { ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle, Events } = require('discord.js');
-const {PermissionsBitField} = require("discord.js")
-
-const cmdName = 'admin'
+const {PermissionsBitField} = require("discord.js");
 
 module.exports = {
-  name:cmdName,
   data: new SlashCommandBuilder()
-    .setName(cmdName)
+    .setName('admin')
     .setDescription("※管理者用コマンドです。")
     .addStringOption(option=>
         option.setName('設定')
         .setDescription("設定")
         .setRequired(true)),
       
-  async execute(interaction, client, env){
+  execute : async function(interaction, client, env){
     //管理者権限がない場合は実行しない
     if (!interaction.memberPermissions.has(PermissionsBitField.Flags.Administrator)){
         interaction.reply({content:"権限がありません。", ephemeral: true});

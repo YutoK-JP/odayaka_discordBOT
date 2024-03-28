@@ -55,7 +55,7 @@ module.exports = {
           .setStyle(ButtonStyle.Secondary),
       );
 
-      newChannel.send({content:`${newstate.member}\n新チャンネルの名前を変更する場合は下のボタンをクリックしてください`, components:[row]});
+      await newChannel.send({content:`${newstate.member}\n新チャンネルの名前を変更する場合は下のボタンをクリックしてください`, components:[row]});
     }
   }
 }
