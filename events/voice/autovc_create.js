@@ -25,10 +25,16 @@ module.exports = {
 
       //登録済みゲームは自動で命名
       const nameTemplates = client.knownGames;
-      const knownActivities = member.presence.activities.filter(activity => Object.keys(nameTemplates).includes(activity.applicationId));
       let voiceTemplate = nameTemplates["default"];
-      if (knownActivities.length>0){
-          voiceTemplate = nameTemplates[knownActivities[0].applicationId];
+
+      const Activities = member.presence?.activities;
+      
+      console.log(Boolean(Activities));
+      if (Activities){
+        const knownActivities = member.presence.activities.filter(activity => Object.keys(nameTemplates).includes(activity.applicationId));
+        if (knownActivities.length>0){
+            voiceTemplate = nameTemplates[knownActivities[0].applicationId];
+        }
       }
 
       //"<テンプレート名> X"の中で最新に
