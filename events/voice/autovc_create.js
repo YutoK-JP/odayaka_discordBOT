@@ -29,7 +29,6 @@ module.exports = {
 
       const Activities = member.presence?.activities;
       
-      console.log(Boolean(Activities));
       if (Activities){
         const knownActivities = member.presence.activities.filter(activity => Object.keys(nameTemplates).includes(activity.applicationId));
         if (knownActivities.length>0){
