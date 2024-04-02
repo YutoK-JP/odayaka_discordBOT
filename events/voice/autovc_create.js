@@ -6,7 +6,7 @@ module.exports = {
   async execute(oldstate, newstate, client){
     //参加もしくは移動時にのみ実行
     if(!(newstate.channel)) return;
-    const vcsetting = client.voiceAutoSetting;
+    const vcsetting = client.guildSettings;
     //未登録のサーバーでは実行しない
     if(!Object.keys(vcsetting).includes(newstate.guild.id)) return;
 
@@ -19,7 +19,7 @@ module.exports = {
       
       //処理に必要なデータ一覧
       //カテゴリ，既存のチャンネルとその名前リスト，
-      const category = guild.channels.cache.get(vcsetting[guild.id].category);
+      const category = guild.channels.cache.get(vcsetting[guild.id].vc_category);
       const channelList = category.children.cache;
       const channelNamelist = channelList.map(channel => channel.name);
 
