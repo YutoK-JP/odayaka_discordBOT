@@ -16,7 +16,6 @@ module.exports = {
       interaction.reply({content:"VCに参加している必要があります", ephemeral: true});
       return;
     }
-
     
     let n = interaction.options._hoistedOptions[0].value;
 
