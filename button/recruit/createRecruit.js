@@ -122,6 +122,8 @@ module.exports = {
                   .setCustomId("descriptInput")
                   .setLabel("募集に備考がある場合は入力してください。")
                   .setStyle(TextInputStyle.Paragraph)
+                  .setMaxLength(200)
+                  .setRequired(false)
               ));
 
             await confirmation.showModal(modal);
