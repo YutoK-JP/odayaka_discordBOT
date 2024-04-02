@@ -1,5 +1,5 @@
-const { StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, ChannelType } = require("discord.js");
-
+const { StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ActionRowBuilder, ButtonBuilder } = require("discord.js");
+const { ButtonStyle, EmbedBuilder, ChannelType, ModalBuilder, TextInputBuilder, TextInputStyle } = require("discord.js");
 module.exports = {
   name: 'createRecruit',
   permissions: ['SEND_MESSAGES'],
@@ -114,37 +114,53 @@ module.exports = {
               continue;
             }
 
-            const recruitChannel = interaction.guild.channels.cache.get(client.guildSettings[interaction.guildId].recruit_display);
+            const modal = new ModalBuilder()
+              .setCustomId('descriptModal')
+              .setTitle('追加の備考')
+              .addComponents(new ActionRowBuilder().addComponents(
+                new TextInputBuilder()
+                  .setCustomId("descriptInput")
+                  .setLabel("募集に備考がある場合は入力してください。")
+                  .setStyle(TextInputStyle.Paragraph)
+              ));
 
-            const targetRole = await interaction.guild.roles.fetch(selectedRole)
+            await confirmation.showModal(modal);
+            confirmation.awaitModalSubmit({ time: 60_000, collectorFilter })
+              .then(async submittion => {
+                const recruitChannel = interaction.guild.channels.cache.get(client.guildSettings[interaction.guildId].recruit_display);
 
-            const vc_category = await interaction.guild.channels.fetch(client.guildSettings[interaction.guildId].vc_category);
-            const channelList = vc_category.children.cache;
-            const channelNamelist = channelList.map(channel => channel.name); 
-            let voiceTemplate = targetRole.name;
+                const targetRole = await interaction.guild.roles.fetch(selectedRole)
 
-            let i = 1;
-            while (channelNamelist.includes(`${voiceTemplate} ${i}`)) i++;
-            
-            const newVC = await vc_category.children.create({ 
-              name: `${voiceTemplate} ${i}`, 
-              type: ChannelType.GuildVoice ,
-              userLimit: recruitNum == 1 ? 0 : recruitNum
-            });
+                const vc_category = await interaction.guild.channels.fetch(client.guildSettings[interaction.guildId].vc_category);
+                const channelList = vc_category.children.cache;
+                const channelNamelist = channelList.map(channel => channel.name);
+                let voiceTemplate = targetRole.name;
 
-            const embed = new EmbedBuilder()
-              .setColor(targetRole.color)
-              .setTitle("メンバー募集")
-              .setDescription("募集が作成されました。緑のボタンから参加できます。")
-              .addFields(
-                { name: '募集者', value: `${interaction.member.displayName}`, inline: true },
-                { name: 'ロール', value: `${targetRole}`, inline: true },
-                { name: '募集人数', value: `${recruitNum == 1 ? "∞(特になし)" : recruitNum}`, inline: true }
-              )
+                let i = 1;
+                while (channelNamelist.includes(`${voiceTemplate} ${i}`)) i++;
 
-            await recruitChannel.send({ content: `${targetRole} ${newVC.url}`, embeds: [embed] });
-            await confirmation.update({ content: `募集を作成しました。${newVC.url}`, components: [] })
-            input_end = true;
+                const newVC = await vc_category.children.create({
+                  name: `${voiceTemplate} ${i}`,
+                  type: ChannelType.GuildVoice,
+                  userLimit: recruitNum == 1 ? 0 : recruitNum
+                });
+
+                const embed = new EmbedBuilder()
+                  .setColor(targetRole.color)
+                  .setTitle("メンバー募集")
+                  .setDescription("募集が作成されました。緑のボタンから参加できます。")
+                  .addFields(
+                    { name: '募集者', value: `${interaction.member.displayName}`, inline: true },
+                    { name: 'ロール', value: `${targetRole}`, inline: true },
+                    { name: '募集人数', value: `${recruitNum == 1 ? "∞(特になし)" : recruitNum}`, inline: true }
+                  )
+
+                await recruitChannel.send({ content: `${targetRole} ${newVC.url}`, embeds: [embed] });
+                await submittion.update({ content: `募集を作成しました。${newVC.url}`, components: [] })
+                input_end = true;
+              })
+              .catch(err => console.log('No modal submit interaction was collected'));
+
             break;
           case 'cancelRecruit_recruit':
             await confirmation.update({ content: "キャンセルしました", components: [] });

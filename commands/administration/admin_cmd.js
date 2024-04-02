@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, } = require('@discordjs/builders');
-const { PermissionsBitField, RoleSelectMenuBuilder } = require("discord.js");
-const { ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle, ChannelSelectMenuBuilder, ChannelType } = require('discord.js');
+const { PermissionsBitField, StringSelectMenuBuilder, StringSelectMenuOptionBuilder,} = require("discord.js");
+const {  ActionRowBuilder, ButtonBuilder, EmbedBuilder, ButtonStyle, ChannelType, PermissionFlagsBits } = require('discord.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -43,13 +43,48 @@ module.exports = {
     }
 
     else if (command.toLowerCase() == "setrec") {
-      const selectMenu = new ChannelSelectMenuBuilder()
+      const guild = interaction.guild;
+
+      //対象チャンネルの網羅
+      const channels_whole = await guild.channels.fetch()
+      const channels_filtered = channels_whole.filter(ch => ch.type==ChannelType.GuildText).filter(ch => ch.permissionsFor(guild.roles.everyone).has(PermissionFlagsBits.ViewChannel));
+
+      let channels_name = {};
+      let channels_option = [];
+      await channels_filtered.each(async ch => {
+        channels_name[ch.id] = ch.name
+
+        channels_option.push(
+          new StringSelectMenuOptionBuilder()
+          .setLabel(ch.name)
+          .setValue(ch.id)
+        )
+      })
+
+
+      //対象ロールの網羅
+      const roles_whole = await guild.roles.fetch()
+      const roles_filtered = roles_whole.filter(role => role.mentionable);
+
+      let roles_name = {};
+      let roles_option = [];
+      await roles_filtered.each(async role => {
+        roles_name[role.id] = role.name
+
+        roles_option.push(
+          new StringSelectMenuOptionBuilder()
+          .setLabel(role.name)
+          .setValue(role.id)
+        )
+      })
+
+      const selectMenu = new StringSelectMenuBuilder()
         .setCustomId('recruitChannelSelect')
         .setPlaceholder('募集チャンネルを選択')
-        .addChannelTypes(ChannelType.GuildText);
+        .addOptions(...channels_option);
 
       const cancelButton = new ButtonBuilder()
-        .setCustomId("cancelRecruitChannel")
+        .setCustomId("cancelRecruitChannel_recruit")
         .setLabel("キャンセル")
         .setStyle(ButtonStyle.Primary)
         .setDisabled(false);
@@ -67,11 +102,12 @@ module.exports = {
         if (confirmation.customId === 'recruitChannelSelect') {
           const roleselectMenu = new ActionRowBuilder()
             .addComponents(
-              new RoleSelectMenuBuilder()
+              new StringSelectMenuBuilder()
                 .setCustomId("mentionableRoleSelect")
                 .setPlaceholder("募集の対象となるロールを選択してください。")
                 .setMinValues(1)
-                .setMaxValues(15)
+                .setMaxValues(roles_option.length)
+                .addOptions(...roles_option)
             );
           const responceRole = await confirmation.update({ components: [roleselectMenu, row_button] });
           const confirmationRole = await responceRole.awaitMessageComponent({ filter: collectorFilter, time: 60_000 });
@@ -83,7 +119,7 @@ module.exports = {
               const embed = new EmbedBuilder()
                 .setColor(0xaaaaff)
                 .setTitle("募集作成")
-                .setDescription("下の青いボタンをクリック後、必要な情報を入力して募集を作成することができます。");
+                .setDescription("下の青いボタンをクリック\n ↓ \nロールを選択、制限人数を設定\n ↓ \n必要であれば備考を入力後、募集を開始できます。");
 
               const recruitRow = new ActionRowBuilder()
                 .addComponents(
@@ -106,7 +142,7 @@ module.exports = {
             console.log(e);
           }
 
-        } else if (confirmation.customId === 'cancelRecruitChannel') {
+        } else if (confirmation.customId === 'cancelRecruitChannel_recruit') {
           await confirmation.update({ content: 'Action cancelled', components: [] });
         }
       } catch (e) {
