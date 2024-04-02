@@ -152,7 +152,8 @@ module.exports = {
                   .addFields(
                     { name: '募集者', value: `${interaction.member.displayName}`, inline: true },
                     { name: 'ロール', value: `${targetRole}`, inline: true },
-                    { name: '募集人数', value: `${recruitNum == 1 ? "∞(特になし)" : recruitNum}`, inline: true }
+                    { name: '募集人数', value: `${recruitNum == 1 ? "∞(特になし)" : recruitNum}`, inline: true },
+                    { name: '備考', value: submittion.fields.getTextInputValue("descriptInput")}
                   )
 
                 await recruitChannel.send({ content: `${targetRole} ${newVC.url}`, embeds: [embed] });
