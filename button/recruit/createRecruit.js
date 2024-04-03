@@ -20,6 +20,12 @@ module.exports = {
       )
     });
 
+    roleoptions.push(
+      new StringSelectMenuOptionBuilder()
+        .setLabel("ロール無し")
+        .setValue("0")
+    );
+
     let roleSelector = new StringSelectMenuBuilder()
       .setCustomId("recruitRoleSelect_recruit")
       .setPlaceholder("ロールを選択してください。")
@@ -76,7 +82,7 @@ module.exports = {
               .addComponents(
                 new ButtonBuilder()
                   .setCustomId('reselect_recruit')
-                  .setLabel(`再選択:現在[${role_label[selectedRole]}]`)
+                  .setLabel(`再選択:現在[${selectedRole != "0" ? role_label[selectedRole] : "ロール無し"}]`)
                   .setStyle(ButtonStyle.Secondary)
               )
             await confirmation.update({ content: "ロールが選択されました", components: [reselectRow, rowCount, rowButton] });
@@ -101,7 +107,7 @@ module.exports = {
                 .addComponents(
                   new ButtonBuilder()
                     .setCustomId('reselect_recruit')
-                    .setLabel(`再選択:現在[${role_label[selectedRole]}]`)
+                    .setLabel(`再選択:現在[${selectedRole != "0" ? role_label[selectedRole] : "ロール無し"}]`)
                     .setStyle(ButtonStyle.Secondary)
                 )
               await confirmation.update({ components: [reselectRow, rowCount, rowButton], })
@@ -130,13 +136,18 @@ module.exports = {
             confirmation.awaitModalSubmit({ time: 60_000, collectorFilter })
               .then(async submittion => {
                 const recruitChannel = interaction.guild.channels.cache.get(client.guildSettings[interaction.guildId].recruit_display);
-
-                const targetRole = await interaction.guild.roles.fetch(selectedRole)
+                
+                let targetRole
+                if (selectedRole==="0"){
+                  targetRole = undefined
+                }else{
+                  targetRole = await interaction.guild.roles.fetch(selectedRole)
+                }
 
                 const vc_category = await interaction.guild.channels.fetch(client.guildSettings[interaction.guildId].vc_category);
                 const channelList = vc_category.children.cache;
                 const channelNamelist = channelList.map(channel => channel.name);
-                let voiceTemplate = targetRole.name;
+                let voiceTemplate = targetRole ? targetRole.name : "Voice Room";
 
                 let i = 1;
                 while (channelNamelist.includes(`${voiceTemplate} ${i}`)) i++;
@@ -148,17 +159,17 @@ module.exports = {
                 });
                 const discript = submittion.fields.getTextInputValue("descriptInput") ? submittion.fields.getTextInputValue("descriptInput") : "特になし";
                 const embed = new EmbedBuilder()
-                  .setColor(targetRole.color)
+                  .setColor(targetRole ? targetRole.color: 0xFFFFFF)
                   .setTitle("メンバー募集")
                   .setDescription("募集が作成されました。緑のボタンから参加できます。")
                   .addFields(
                     { name: '募集者', value: `${interaction.member.displayName}`, inline: true },
-                    { name: 'ロール', value: `${targetRole}`, inline: true },
+                    { name: 'ロール', value: `${targetRole ? targetRole : "なし"}`, inline: true },
                     { name: '募集人数', value: `${recruitNum == 1 ? "∞(特になし)" : recruitNum}`, inline: true },
                     { name: '備考', value: discript}
                   )
 
-                await recruitChannel.send({ content: `${targetRole} ${newVC.url}`, embeds: [embed] });
+                await recruitChannel.send({ content: `${targetRole ? targetRole : ""} ${newVC.url}`, embeds: [embed] });
                 await submittion.update({ content: `募集を作成しました。${newVC.url}`, components: [] })
                 input_end = true;
               })
