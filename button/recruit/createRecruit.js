@@ -146,7 +146,7 @@ module.exports = {
                   type: ChannelType.GuildVoice,
                   userLimit: recruitNum == 1 ? 0 : recruitNum
                 });
-
+                const discript = submittion.fields.getTextInputValue("descriptInput") ? submittion.fields.getTextInputValue("descriptInput") : "特になし";
                 const embed = new EmbedBuilder()
                   .setColor(targetRole.color)
                   .setTitle("メンバー募集")
@@ -155,14 +155,14 @@ module.exports = {
                     { name: '募集者', value: `${interaction.member.displayName}`, inline: true },
                     { name: 'ロール', value: `${targetRole}`, inline: true },
                     { name: '募集人数', value: `${recruitNum == 1 ? "∞(特になし)" : recruitNum}`, inline: true },
-                    { name: '備考', value: submittion.fields.getTextInputValue("descriptInput")}
+                    { name: '備考', value: discript}
                   )
 
                 await recruitChannel.send({ content: `${targetRole} ${newVC.url}`, embeds: [embed] });
                 await submittion.update({ content: `募集を作成しました。${newVC.url}`, components: [] })
                 input_end = true;
               })
-              .catch(err => console.log('No modal submit interaction was collected'));
+              .catch(err => console.log(err));
 
             break;
           case 'cancelRecruit_recruit':
