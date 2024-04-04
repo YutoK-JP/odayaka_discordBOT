@@ -68,7 +68,7 @@ module.exports = {
     });
 
     const collectorFilter = i => i.user.id === interaction.user.id;
-    let input_end = false;
+    var input_end = false;
 
     try {
       let confirmation
@@ -133,7 +133,7 @@ module.exports = {
               ));
 
             await confirmation.showModal(modal);
-            confirmation.awaitModalSubmit({ time: 60_000, collectorFilter })
+            await confirmation.awaitModalSubmit({ time: 60_000, collectorFilter })
               .then(async submittion => {
                 const recruitChannel = interaction.guild.channels.cache.get(client.guildSettings[interaction.guildId].recruit_display);
                 
@@ -157,6 +157,7 @@ module.exports = {
                   type: ChannelType.GuildVoice,
                   userLimit: recruitNum == 1 ? 0 : recruitNum
                 });
+                const datetime = new Date();
                 const discript = submittion.fields.getTextInputValue("descriptInput") ? submittion.fields.getTextInputValue("descriptInput") : "特になし";
                 const embed = new EmbedBuilder()
                   .setColor(targetRole ? targetRole.color: 0xFFFFFF)
@@ -166,11 +167,13 @@ module.exports = {
                     { name: '募集者', value: `${interaction.member.displayName}`, inline: true },
                     { name: 'ロール', value: `${targetRole ? targetRole : "なし"}`, inline: true },
                     { name: '募集人数', value: `${recruitNum == 1 ? "∞(特になし)" : recruitNum}`, inline: true },
+                    { name: '募集開始', value: `${datetime.getHours()}:${datetime.getMinutes()}`, inline: true },
                     { name: '備考', value: discript}
                   )
 
-                await recruitChannel.send({ content: `${targetRole ? targetRole : ""} ${newVC.url}`, embeds: [embed] });
-                await submittion.update({ content: `募集を作成しました。${newVC.url}`, components: [] })
+                await recruitChannel.send({ content: `${targetRole ? targetRole : ""} ${newVC.url} \n id:${newVC.id}`, embeds: [embed] });
+                await submittion.update({ content: `募集を作成しました。${newVC.url}`, components: [] });
+                
                 input_end = true;
               })
               .catch(err => console.log(err));
@@ -181,7 +184,9 @@ module.exports = {
             input_end = true;
             break;
         }
+        console.log(input_end);
       } while (!input_end);
+      console.log("proccess ended");
     } catch (e) {
       await interaction.editReply({ content: 'Confirmation not received within 1 minute, cancelling', components: [] });
       console.log(e);
