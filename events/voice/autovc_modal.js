@@ -10,7 +10,9 @@ module.exports = {
         const newName = interaction.fields.getTextInputValue('newName');
         const channel = interaction.channel;
         interaction.reply("チャンネル名を変更しました。");
-        const startMes = await channel.messages.fetch({ after: '0', limit: 1 });
+
+        const messages = await channel.messages.fetch();
+        const startMes = messages.filter(mes=>mes.author.id === client.user.id && mes.components.length>0);
         startMes.first().delete();
         channel.setName(newName);
     }
