@@ -60,7 +60,6 @@ module.exports = {
             .setStyle(ButtonStyle.Secondary),
         );
 
-      await newChannel.send({ content: `VCデータ\n入室カウント:{1}\nタイムスタンプ:(${new Date().getTime()})` })
       await newChannel.send({ content: `${newstate.member}\n新チャンネルの名前を変更する場合は下のボタンをクリックしてください`, components: [row] });
     }
   }

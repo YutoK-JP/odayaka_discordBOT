@@ -29,27 +29,7 @@ module.exports = {
     }
     //vc参加人数が0人の場合はチャンネルを削除
     let members = channel.members;
-    if (members.size == 0) {
-      const messages = await channel.messages.fetch();
-      const statMessage = messages.filter(mes => mes.author.id === client.user.id && mes.content.startsWith("VCデータ")).first();
-      if (statMessage) {
-        const statMesStr = statMessage.content;
-        const fs = require("fs");
-
-        const vcname = channel.name;
-        const vcid = channel.id;
-        const count = statMesStr.split(/{|}/)[1];
-        const timestamp = statMesStr.split(/\(|\)/)[1];
-        const created = new Date(Number(timestamp));
-        const duration = (Date.now() - timestamp) / 1000;
-
-        const logtxt = `"${created.toLocaleString()}", "${vcname}"(${vcid}), ${count}, ` +
-          `${String(Math.floor(duration / 3600)).padStart(2, "0")}:${String(Math.floor((duration % 3600) / 60)).padStart(2, "0")}:${String(Math.floor(duration % 60)).padStart(2, "0")}\n`;
-        
-        fs.appendFileSync(env.FILEPATH.VC_LOG, logtxt);
-      }
-      oldstate.channel.delete();
-    }
+    if (members.size == 0) oldstate.channel.delete();
     //ボイス記録用
     //console.log(oldstate.channel);
   }
