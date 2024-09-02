@@ -29,40 +29,35 @@ client.guildSettings = require(env.FILEPATH.GUILD_SETTINGS);
 const rest = new REST({ version: '9' }).setToken(env.TOKEN);
 const prefix = "!";
 
+//再帰的ファイル探索
+const listFiles = (dir) =>
+  fs.readdirSync(dir, { withFileTypes: true }).flatMap(dirent =>
+    dirent.isFile() ? [`${dir}/${dirent.name}`] : listFiles(`${dir}/${dirent.name}`)
+)
+
 //#region MODERN COMMAND
 //BUILD SLASH COMMAND
-const commandDirRoot = path.join(__dirname, 'commands');
-const commandFolders = fs.readdirSync(commandDirRoot);
-for (const folder of commandFolders) {
-  const folderPaths = path.join(commandDirRoot, folder);
-  const commandFiles = fs.readdirSync(folderPaths).filter(file => file.endsWith('.js'));
-  for (const file of commandFiles) {
-    const filePath = path.join(folderPaths, file);
-    const command = require(filePath);
-    if ('data' in command && 'execute' in command) {
-      client.slashCommands.set(command.data.name, command);
-    } else {
-      console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
-    }
+const commandFiles = listFiles(path.join(__dirname, 'commands'));
+
+for (const file of commandFiles) {
+  const command = require(file);
+  if ('data' in command && 'execute' in command) {
+    client.slashCommands.set(command.data.name, command);
+  } else {
+    console.log(`[WARNING] The command at ${file} is missing a required "data" or "execute" property.`);
   }
 }
 
 // BUTTON HANDLER 
-const buttonDirRoot = path.join(__dirname, 'button');
-const buttonFolders = fs.readdirSync(buttonDirRoot);
+const buttonFiles = listFiles(path.join(__dirname, 'button'));
 
-for (const folder of buttonFolders) {
-  
-  const folderPaths = path.join(buttonDirRoot, folder);
-  const buttonFiles = fs.readdirSync(folderPaths).filter(file => file.endsWith('.js'));
-  for (const file of buttonFiles) {    const filePath = path.join(folderPaths, file);
-    const button = require(filePath);
+for (const file of buttonFiles) {
+  const button = require(file);
 
-    if ('execute' in button) {
-      client.buttonCommands.set(button.name, button);
-    } else {
-      console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
-    }
+  if ('execute' in button) {
+    client.buttonCommands.set(button.name, button);
+  } else {
+    console.log(`[WARNING] The command at ${file} is missing a required "data" or "execute" property.`);
   }
 }
 
@@ -112,10 +107,10 @@ client.on(Events.InteractionCreate, async interaction => {
 
 //#region prejix command
 //LEGACY COMMAND HANDLER
-const lcomsFiles = fs.readdirSync('./legacy_com').filter(file => file.endsWith('.js'))
-for (const file of lcomsFiles) {
-  const command = require(`./legacy_com/${file}`)
-  client.legacyCommands.set(command.name, command);
+const legacy_files = listFiles(path.join(__dirname, 'legacy_com'))
+for (const file of legacy_files) {
+    const command = require(file)
+    client.legacyCommands.set(command.name, command);
 }
 
 
@@ -138,28 +133,23 @@ client.on(Events.MessageCreate, message => {
 //#endregion
 
 // EVENT HANDLER
-const eventDirRoot = path.join(__dirname, 'events');
-const eventFolders = fs.readdirSync(eventDirRoot);
+const eventFiles = listFiles(path.join(__dirname, 'events'))
 
-for (const folder of eventFolders) {
-  const folderPaths = path.join(eventDirRoot, folder);
-  const eventFiles = fs.readdirSync(folderPaths).filter(file => file.endsWith('.js'));
-  for (const file of eventFiles) {
-    const filePath = path.join(folderPaths, file);
-    const event = require(filePath);
-    if (event.once) {
-      client.once(event.type, (...args) => event.execute(...args, client, env))
-    }
-    else {
-      client.on(event.type, (...args) => {
-        try {
-          event.execute(...args, client, env)
-        }
-        catch (error) { console.error(error) }
-      })
-    }
-    console.log(`event ${event.nick} was registered.`);
+for (const file of eventFiles) {
+  const event = require(file);
+  if(event.once){
+    client.once(event.type, (...args) => event.execute(...args, client, env))
+    } 
+  else {
+    console.log(event)
+    client.on(event.type, (...args) => {
+      try{
+        event.execute(...args, client, env)
+      }
+        catch (error) {console.error(error)}
+    })
   }
+  console.log(`event ${event.nick} was registered.`);
 }
 
 //SCHEDULE HANDLER
